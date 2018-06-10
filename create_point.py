@@ -19,4 +19,6 @@ def create_point():
     plt.plot(point_x[0:], point_y[0:],'bo')#node
     plt.plot(base_x[0:] , base_y[0:], 'go')#base station
     plt.show()
+
+    # test การ commit
 create_point()
