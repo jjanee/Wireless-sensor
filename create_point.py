@@ -41,18 +41,18 @@ def create_point():
                                 (node_member[node][1] - cluster_member[cluster][1])**2)
             
             #find shortest cluster **if cal_distance = 0 that's a Cluster
-            if near_cluster == "none" :
+##            if near_cluster == "none" :#ไปทุกโหนด
+##                near_cluster = cal_distance
+##                clus_num = cluster
+##                plt.plot([node_member[node][0], cluster_member[cluster][0]],\
+##                         [node_member[node][1], cluster_member[cluster][1]],\
+##                         linestyle='-', linewidth=0.1)#หลากสี
+            elif cal_distance < near_cluster:
                 near_cluster = cal_distance
                 clus_num = cluster
                 plt.plot([node_member[node][0], cluster_member[cluster][0]],\
                          [node_member[node][1], cluster_member[cluster][1]],\
-                         linestyle='-', linewidth=0.1)#ไปทุกโหนด
-            if cal_distance < near_cluster:
-                near_cluster = cal_distance
-                clus_num = cluster
-                plt.plot([node_member[node][0], cluster_member[cluster][0]],\
-                         [node_member[node][1], cluster_member[cluster][1]],\
-                         color='k', linestyle='-', linewidth=0.1)
+                         color='k', linestyle='-', linewidth=0.1)#สีดำ
 
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
