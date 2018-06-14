@@ -4,13 +4,13 @@ from math import sqrt
 
 def create_point():
     "insert area and population of node and point of base station"
-    area_x = int(100) #meter
-    area_y = int(100) #meter
+    area_x = int(50) #meter
+    area_y = int(50) #meter
     num_base = int(1)
     base_x, base_y, station = [], [], []
     ran_nodeX, ran_nodeY = [],[]
     node_member, cluster_member = [],[]
-    list_distance = []
+    node_distance = []
     density = float(0.025) #nodes/meter^2
     len_nodes = int(density*(area_x*area_y))
 
@@ -28,31 +28,32 @@ def create_point():
             node_member.append([ran_nodeX[count], ran_nodeY[count]])
         count += 1
 
-    while(len(cluster_member) != 10): #random Cluster from amount Node
+    while(len(cluster_member) != 5): #random Cluster from amount Node
         cluster = node_member[rd.randint(0,len(node_member)-1)]
         if cluster not in cluster_member:
             cluster_member.append(cluster)
             node_member.remove(cluster)
 
-    for node in range(len(node_member)):
-        near_cluster = "none"
-        for cluster in range(len(cluster_member)):
+    for cluster in range(len(cluster_member)):
+##        near_cluster = "none"
+        for node in range(len(node_member)):
             cal_distance = sqrt((node_member[node][0] - cluster_member[cluster][0])**2+\
                                 (node_member[node][1] - cluster_member[cluster][1])**2)
-            
-            #find shortest cluster **if cal_distance = 0 that's a Cluster
+            print(node_member[node], cluster_member[cluster], cal_distance)
+            if cal_distance != 0:
+                node_distance.append([cal_distance, node_member[node], cluster_member[cluster]])
+               
+        print("-------")
+##            #find shortest cluster **if cal_distance = 0 that's a Cluster
 ##            if near_cluster == "none" :#ไปทุกโหนด
+##                near_cluster = cal_distance
+##                clus_num = cluster
+##            elif cal_distance < near_cluster:
 ##                near_cluster = cal_distance
 ##                clus_num = cluster
 ##                plt.plot([node_member[node][0], cluster_member[cluster][0]],\
 ##                         [node_member[node][1], cluster_member[cluster][1]],\
-##                         linestyle='-', linewidth=0.1)#หลากสี
-            elif cal_distance < near_cluster:
-                near_cluster = cal_distance
-                clus_num = cluster
-                plt.plot([node_member[node][0], cluster_member[cluster][0]],\
-                         [node_member[node][1], cluster_member[cluster][1]],\
-                         color='k', linestyle='-', linewidth=0.1)#สีดำ
+##                         color='k', linestyle='-', linewidth=0.1)#สีดำ
 
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
