@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import random as rd
-from math import sqrt
+import numpy 
+from math import sqrt, ceil
 
 def create_point():
     "insert area and population of node and point of base station"
@@ -34,16 +35,14 @@ def create_point():
             cluster_member.append(cluster)
             node_member.remove(cluster)
 
-    for cluster in range(len(cluster_member)):
+    for node in range(len(node_member)):
 ##        near_cluster = "none"
-        for node in range(len(node_member)):
+        for cluster in range(len(cluster_member)):
             cal_distance = sqrt((node_member[node][0] - cluster_member[cluster][0])**2+\
                                 (node_member[node][1] - cluster_member[cluster][1])**2)
-            print(node_member[node], cluster_member[cluster], cal_distance)
-            if cal_distance != 0:
-                node_distance.append([cal_distance, node_member[node], cluster_member[cluster]])
-               
-        print("-------")
+            node_distance.append([node_member[node], cluster_member[cluster], cal_distance])
+        print(numpy.argmin(node_distance[node][2]))
+            
 ##            #find shortest cluster **if cal_distance = 0 that's a Cluster
 ##            if near_cluster == "none" :#ไปทุกโหนด
 ##                near_cluster = cal_distance
