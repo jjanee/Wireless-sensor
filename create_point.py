@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import random as rd
 import numpy 
-from math import sqrt, ceil
+import math 
 
 def create_point():
     "insert area and population of node and point of base station"
@@ -11,15 +11,16 @@ def create_point():
     base_x, base_y, station = [], [], []
     ran_nodeX, ran_nodeY = [],[]
     node_member, cluster_member = [],[]
-    node_distance = []
+    distance, node_distance = [], []
     density = float(0.025) #nodes/meter^2
-    len_nodes = int(density*(area_x*area_y))
-
+    len_nodes = math.ceil(density*(area_x*area_y))
+    print("len_nodes is "+str(len_nodes))
     for item in range (0, num_base): #input base station point
         base_x.append(int(input("Enter point x of base station "+str(item+1)+" = ")))
         base_y.append(int(input("Enter point y of base station "+str(item+1)+" = ")))
         station.append([base_x[item], base_y[item]])
-
+    population = float(input("cluster"))
+    population = math.ceil(population*len_nodes)
     count = 0
     while(len(node_member) != len_nodes): #random Node
         ran_nodeX.append(rd.randint(0,area_x))
@@ -28,20 +29,23 @@ def create_point():
            [ran_nodeX[count], ran_nodeY[count]] not in station :
             node_member.append([ran_nodeX[count], ran_nodeY[count]])
         count += 1
-
-    while(len(cluster_member) != 5): #random Cluster from amount Node
+    while(len(cluster_member) != population): #random Cluster from amount Node
         cluster = node_member[rd.randint(0,len(node_member)-1)]
         if cluster not in cluster_member:
             cluster_member.append(cluster)
             node_member.remove(cluster)
-
+    
     for node in range(len(node_member)):
 ##        near_cluster = "none"
         for cluster in range(len(cluster_member)):
-            cal_distance = sqrt((node_member[node][0] - cluster_member[cluster][0])**2+\
-                                (node_member[node][1] - cluster_member[cluster][1])**2)
-            node_distance.append([node_member[node], cluster_member[cluster], cal_distance])
-        print(numpy.argmin(node_distance[node][2]))
+            cal_distance = math.sqrt((node_member[node][0] - cluster_member[cluster][0])**2+\
+                                     (node_member[node][1] - cluster_member[cluster][1])**2)
+             
+            distance.append(cal_distance)
+        print(str(cluster)+" "+str(min(distance)))
+        print("_______________")
+        distance = []
+
             
 ##            #find shortest cluster **if cal_distance = 0 that's a Cluster
 ##            if near_cluster == "none" :#ไปทุกโหนด
