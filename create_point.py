@@ -8,7 +8,7 @@ def create_point():
 ##    area_x = int(input("Enter width area = ")) #meter
 ##    area_y = int(input("Enter height area = ")) #meter
 ##    num_base = int(input(" How many base sation in area = "))
-    area_x, area_y = 40, 40
+    area_x, area_y = 100, 100
     station, ran_nodeX, ran_nodeY  = [[1,1]],[],[]
     node_member, cluster_member = [],[]
     distance, node_distance = [], []
@@ -43,12 +43,12 @@ def create_point():
             elif cal_distance < near_cluster and node_member[node] not in distance : 
                 near_cluster = cal_distance
                 clus_num = cluster
-                distance.append([node_member[node]])
+                distance.append([node_member[node], cluster_member[clus_num]])
+                
         plt.plot([node_member[node][0], cluster_member[clus_num][0]],\
                 [node_member[node][1], cluster_member[clus_num][1]],\
                 color='k', linestyle='-', linewidth=0.1)#สีดำ
-    print(distance)
-            
+    print(distance ,"/n")
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
     base_x, base_y = zip(*station)
