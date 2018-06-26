@@ -15,9 +15,7 @@ def create_point():
     
     for item in range (0, num_base): #input base station point
         station.append(map(int, input("Enter point of base station "+str(item+1)+" = ").split(',')))
-##        base_x.append(int(input("Enter point x of base station "+str(item+1)+"= ")))
-##        base_y.append(int(input("Enter point y of base station "+str(item+1)+"= ")))
-        
+
     while(len(node_member) != len_nodes): #random Node
         node = [rd.randint(0,area_x), rd.randint(0,area_y)]
         if node not in node_member and node not in station :
