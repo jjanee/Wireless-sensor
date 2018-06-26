@@ -16,7 +16,7 @@ def create_point():
 
 
     for item in range (0, num_base): #input base station point
-        station.append(input("X,Y coordinate of this base station "+str(item+1)+" = ").split(','))
+        station.append(map(int,input("X,Y coordinate of this base station "+str(item+1)+" = ").split(',')))
 
     
     count = 0
