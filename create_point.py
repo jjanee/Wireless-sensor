@@ -6,7 +6,7 @@ def create_point():
     "insert area and population of node and point of base station"
     area_x = int(input("Enter width area = ")) #meter
     area_y = int(input("Enter height area = ")) #meter
-    station = []
+    base_x, base_y, station = [], [], []
     node_member, cluster_member = [],[]
     distance, node_distance = [], []
     density = float(input("Enter destity of nodes = ")) #nodes/meter^2
@@ -14,7 +14,9 @@ def create_point():
     num_base = int(input("How many base sation in area = "))
     
     for item in range (0, num_base): #input base station point
-        station.append(input("Enter point of base station "+str(item+1)+" = ").split(','))
+        station.append(map(int, input("Enter point of base station "+str(item+1)+" = ").split(',')))
+##        base_x.append(int(input("Enter point x of base station "+str(item+1)+"= ")))
+##        base_y.append(int(input("Enter point y of base station "+str(item+1)+"= ")))
         
     while(len(node_member) != len_nodes): #random Node
         node = [rd.randint(0,area_x), rd.randint(0,area_y)]
@@ -27,7 +29,7 @@ def create_point():
         cluster = node_member[rd.randint(0,len(node_member)-1)]
         cluster_member.append(cluster)
         node_member.remove(cluster)
-
+    
     for node in range(len(node_member)):
         near_cluster = "none"
         for cluster in range(len(cluster_member)):
@@ -47,7 +49,11 @@ def create_point():
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
     base_x, base_y = zip(*station)
-    plt.plot(base_x[0:], base_y[0:], '.')#nodes
+    plt.xlabel('width')
+    plt.ylabel('height')
+    plt.title('Wireless node')
+    plt.grid(True)
+    plt.plot(base_x[0:], base_y[0:], 'ro')#nodes
     plt.plot(node_x[0:], node_y[0:],'.')#nodes
     plt.plot(clus_x[0:], clus_y[0:], 'go')#cluster head
     plt.show()
