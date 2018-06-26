@@ -67,8 +67,8 @@ def create_point():
 
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
-#    base_x, base_y = zip(*station)
-#    plt.plot(base_x[0:], base_y[0:],'ro')#base station
+    base_x, base_y = zip(*station)
+    plt.plot(base_x[0:], base_y[0:],'ro')#base station
     plt.plot(node_x[0:], node_y[0:],'bo')#nodes
     plt.plot(clus_x[0:], clus_y[0:],'go')#cluster head
     plt.show()
