@@ -7,12 +7,17 @@ def variable(width, height, density, clus_density, num_base):
     node_member, cluster_member, station, shot_dis_data = [], [], [], []
     len_nodes = math.ceil(density*(width*height))
     len_cluster = math.ceil(clus_density*len_nodes)
-    #input base station point
+    
+    return node_member, cluster_member, station, shot_dis_data, len_nodes, len_cluster
+
+
+def base_station(num_base, station):
+    "input base station point"
     for item in range(num_base):
         station.append(map(int,"51,-1".split(',')))
-    #split 2-metric list to 1-metric list
+    #split 2d list to 1d list
     base_x, base_y = zip(*station)
-    return node_member, cluster_member, station, shot_dis_data, len_nodes, len_cluster, station, base_x, base_y
+    return station, base_x, base_y
 
 
 def random_node(node_member, len_nodes, width, height, station):
@@ -24,7 +29,7 @@ def random_node(node_member, len_nodes, width, height, station):
            [ran_nodex, ran_nodey] not in station :
             node_member.append([ran_nodex, ran_nodey])
         count += 1
-    #split 2-metric list to 1-metric list
+    #split 2d list to 1d list
     node_x, node_y = zip(*node_member)
     return node_member, node_x, node_y
 
@@ -42,7 +47,7 @@ def random_cluster(cluster_member, len_cluster, node_member):
             cluster_member.append(cluster)
             node_member.remove(cluster)
         count += 1
-    #split 2-metric list to 1-metric list
+    #split 2d list to 1d list
     clus_x, clus_y = zip(*cluster_member)
     return clus_x, clus_y, cluster_member
 
@@ -83,25 +88,34 @@ def plot(shot_dis_data, node_member, cluster_member, clus_x, clus_y, base_x, bas
 def main(width, height, density, clus_density, num_base):
     "insert area and population of node and point of base station"
 
+
     #variable
     node_member, cluster_member, station, shot_dis_data, len_nodes,\
-    len_cluster, station, base_x, base_y = variable(width, height, density, clus_density, num_base)
+    len_cluster = variable(width, height, density, clus_density, num_base)
+
+
+    #set base_station
+    station, base_x, base_y = base_station(num_base, station)
 
 
     #random_node
-    node_member, node_x, node_y = random_node(node_member, len_nodes, width, height, station)
+    node_member, node_x, node_y = random_node(node_member, len_nodes, width,\
+                                              height, station)
 
 
     #random_cluster
-    clus_x, clus_y, cluster_member = random_cluster(cluster_member, len_cluster, node_member)
+    clus_x, clus_y, cluster_member = random_cluster(cluster_member,\
+                                                    len_cluster, node_member)
 
 
    #cal_shot_distance
-    shot_dis_data = cal_shot_distance(node_member, cluster_member, shot_dis_data)
+    shot_dis_data = cal_shot_distance(node_member, cluster_member,\
+                                      shot_dis_data)
 
 
     #plot
-    plot(shot_dis_data, node_member, cluster_member, clus_x, clus_y, base_x, base_y, node_x, node_y)
+    plot(shot_dis_data, node_member, cluster_member, clus_x, clus_y, base_x,\
+         base_y, node_x, node_y)
 
 
 
