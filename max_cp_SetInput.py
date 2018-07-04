@@ -89,9 +89,6 @@ def plot(shot_dis_data, node_member, cluster_member, station_member):
                      [node_member[shot_dis_data[z][0]][1], cluster_member[shot_dis_data[z][1]][1]],
                      color='k', linestyle='-', linewidth=0.1)  # Black Line
     # split 2d list to 1d list
-    print(station_member)
-    print(cluster_member)
-    print(node_member)
     base_x, base_y = zip(*station_member)
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
@@ -130,28 +127,26 @@ def new_input(width, height, density, cluster_density, num_base):
     plot(shot_dis_data, node_member, cluster_member, station_member)
 
 
-def only_random_cluster():
+def current_data():
     shot_dis_data, node_member, cluster_member, station_member = [], [], [], []
     with open("shot_dis_data.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            shot_dis_data.append(line)
+            shot_dis_data.append(list(map(int,line)))
     with open("node_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            node_member.append(line)
+            node_member.append(list(map(int,line)))
     with open("cluster_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            cluster_member.append(line)
+            cluster_member.append(list(map(int,line)))
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            station_member.append(line)
-    print(shot_dis_data)
-    print(cluster_member)
-    print(station_member)
-    print(shot_dis_data)
+            station_member.append(list(map(int,line)))
+    # plot
+    plot(shot_dis_data, node_member, cluster_member, station_member)
 
 
 def start():
@@ -164,7 +159,7 @@ def start():
                   float(0.079),
                   int(1))
     elif option == 1:  # random cluster:
-        only_random_cluster()
+        current_data()
 start()
 # input("Width of this area (Meter) = ")
 # input("Height of this area (Meter) = ")
