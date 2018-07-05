@@ -85,8 +85,8 @@ def plot(shot_dis_data, node_member, cluster_member, station_member):
     # plot line between node and cluster
     for z in range(len(shot_dis_data)):
         if shot_dis_data[z][2] != 0:
-            plt.plot([node_member[shot_dis_data[z][0]][0], cluster_member[shot_dis_data[z][1]][0]],
-                     [node_member[shot_dis_data[z][0]][1], cluster_member[shot_dis_data[z][1]][1]],
+            plt.plot([node_member[int(shot_dis_data[z][0])][0], cluster_member[int(shot_dis_data[z][1])][0]],
+                     [node_member[int(shot_dis_data[z][0])][1], cluster_member[int(shot_dis_data[z][1])][1]],
                      color='k', linestyle='-', linewidth=0.1)  # Black Line
     # split 2d list to 1d list
     base_x, base_y = zip(*station_member)
@@ -104,8 +104,8 @@ def plot(shot_dis_data, node_member, cluster_member, station_member):
 
 
 def new_input(width, height, density, cluster_density, num_base):
-    """insert area and population of node and point of base station""" \
- \
+    """insert area and population of node and point of base station""" 
+    
     # variable
     node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster = variable(width, height, density
                                                                                                   , cluster_density)
@@ -126,12 +126,13 @@ def new_input(width, height, density, cluster_density, num_base):
     plot(shot_dis_data, node_member, cluster_member, station_member)
 
 
+
 def current_data():
     shot_dis_data, node_member, cluster_member, station_member = [], [], [], []
     with open("shot_dis_data.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            shot_dis_data.append(list(map(int, line)))
+            shot_dis_data.append(line)
     with open("node_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
@@ -147,9 +148,6 @@ def current_data():
     # plot
     plot(shot_dis_data, node_member, cluster_member, station_member)
 
-def random_cluster():
-    """random only cluster"""
-
 
 def start():
     """It's all begin here..."""
@@ -162,9 +160,9 @@ def start():
                   int(1))
     elif option == 1:  # current data:
         current_data()
-
-
 start()
+
+
 # input("Width of this area (Meter) = ")
 # input("Height of this area (Meter) = ")
 # input("Node density (Node/Meter^2) = ")
