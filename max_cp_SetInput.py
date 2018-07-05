@@ -107,9 +107,8 @@ def new_input(width, height, density, cluster_density, num_base):
     """insert area and population of node and point of base station""" \
  \
     # variable
-    node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster = variable(width, height,
-                                                                                                  density,
-                                                                                                  cluster_density)
+    node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster = variable(width, height, density
+                                                                                                  , cluster_density)
 
     # random_node
     node_member = random_node(node_member, len_nodes, width, height, station_member)
@@ -132,21 +131,24 @@ def current_data():
     with open("shot_dis_data.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            shot_dis_data.append(list(map(int,line)))
+            shot_dis_data.append(list(map(int, line)))
     with open("node_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            node_member.append(list(map(int,line)))
+            node_member.append(list(map(int, line)))
     with open("cluster_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            cluster_member.append(list(map(int,line)))
+            cluster_member.append(list(map(int, line)))
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            station_member.append(list(map(int,line)))
+            station_member.append(list(map(int, line)))
     # plot
     plot(shot_dis_data, node_member, cluster_member, station_member)
+
+def random_cluster():
+    """random only cluster"""
 
 
 def start():
@@ -158,8 +160,10 @@ def start():
                   float(0.025),
                   float(0.079),
                   int(1))
-    elif option == 1:  # random cluster:
+    elif option == 1:  # current data:
         current_data()
+
+
 start()
 # input("Width of this area (Meter) = ")
 # input("Height of this area (Meter) = ")
