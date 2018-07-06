@@ -127,18 +127,15 @@ def new_input(width, height, density, cluster_density, num_base):
     # plot
     plot(shot_dis_data, node_member, cluster_member, station_member)
 
+
 def random_cluster_ingroup():
     """only random new cluster from their own group"""
-
-
-def current_data():
-    """use current data not change anything"""
     #gain data from .csv files
     shot_dis_data, node_member, cluster_member, station_member = [], [], [], []
-    with open("shot_dis_data.csv", 'r') as csvnew:
+    with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
-            shot_dis_data.append(line)
+            station_member.append(list(map(int, line)))
     with open("node_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
@@ -147,10 +144,37 @@ def current_data():
         read = csv.reader(csvnew)
         for line in read:
             cluster_member.append(list(map(int, line)))
+    with open("shot_dis_data.csv", 'r') as csvnew:
+        read = csv.reader(csvnew)
+        for line in read:
+            shot_dis_data.append(line)
+    # sort by group
+    # shot_dis_data.sort(key=lambda x: int(x[1]))
+    # for x in range(len(shot_dis_data)):
+    #     print(shot_dis_data[x])
+
+
+
+def current_data():
+    """use current data not change anything"""
+    #gain data from .csv files
+    shot_dis_data, node_member, cluster_member, station_member = [], [], [], []
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
             station_member.append(list(map(int, line)))
+    with open("node_member.csv", 'r') as csvnew:
+        read = csv.reader(csvnew)
+        for line in read:
+            node_member.append(list(map(int, line)))
+    with open("cluster_member.csv", 'r') as csvnew:
+        read = csv.reader(csvnew)
+        for line in read:
+            cluster_member.append(list(map(int, line)))
+    with open("shot_dis_data.csv", 'r') as csvnew:
+        read = csv.reader(csvnew)
+        for line in read:
+            shot_dis_data.append(line)
     # plot
     plot(shot_dis_data, node_member, cluster_member, station_member)
 
@@ -166,6 +190,8 @@ def start():
                   int(1))
     elif option == 1:  # current data:
         current_data()
+    elif option == 2:
+        random_cluster_ingroup()
 
 start()
 
