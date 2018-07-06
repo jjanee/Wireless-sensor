@@ -45,7 +45,6 @@ def random_cluster(cluster_member, len_cluster, node_member):
     """random Cluster from amount Node"""
     while len(cluster_member) != len_cluster:
         cluster = node_member[rd.randint(0, len(node_member) - 1)]
-
         if cluster not in cluster_member:
             cluster_member.append(cluster)
     # append data to csv. file
@@ -93,14 +92,16 @@ def plot(shot_dis_data, node_member, cluster_member, station_member):
     clus_x, clus_y = zip(*cluster_member)
     node_x, node_y = zip(*node_member)
     # plot node, base, cluster
+    plt.axis('scaled')
     plt.xlabel('Width')
     plt.ylabel('Height')
     plt.title('Random Sensor')
     plt.grid(True)
-    plt.plot(base_x[0:], base_y[0:], 'ro')  # base station
-    plt.plot(node_x[0:], node_y[0:], 'bo')  # nodes
-    plt.plot(clus_x[0:], clus_y[0:], 'go')  # cluster head
+    plt.plot(base_x[0:], base_y[0:], 'ro', markersize=3)  # base station
+    plt.plot(node_x[0:], node_y[0:], 'bo', markersize=3)  # nodes
+    plt.plot(clus_x[0:], clus_y[0:], 'go', markersize=3)  # cluster head
     plt.show()
+
 
 
 def new_input(width, height, density, cluster_density, num_base):
@@ -122,12 +123,17 @@ def new_input(width, height, density, cluster_density, num_base):
     # cal_shot_distance
     shot_dis_data = cal_shot_distance(node_member, cluster_member, shot_dis_data)
 
+
     # plot
     plot(shot_dis_data, node_member, cluster_member, station_member)
 
+def random_cluster_ingroup():
+    """only random new cluster from their own group"""
 
 
 def current_data():
+    """use current data not change anything"""
+    #gain data from .csv files
     shot_dis_data, node_member, cluster_member, station_member = [], [], [], []
     with open("shot_dis_data.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
@@ -150,7 +156,7 @@ def current_data():
 
 
 def start():
-    """It's all begin here..."""
+    """Choose Functions"""
     option = int(input("0,1,2 : "))
     if option == 0:  # new input
         new_input(int(50),
@@ -160,6 +166,7 @@ def start():
                   int(1))
     elif option == 1:  # current data:
         current_data()
+
 start()
 
 
