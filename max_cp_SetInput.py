@@ -6,10 +6,10 @@ import math
 
 def variable(width, height, density, cluster_density):
     """variables"""
-    node_member, cluster_member, station_member, shot_dis_data = [], [], [], []
+    node_member, cluster_member, station_member, node_energy, shot_dis_data = [], [], [], [], []
     len_nodes = math.ceil(density * (width * height))
     len_cluster = math.ceil(cluster_density * len_nodes)
-    return node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster
+    return node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster, node_energy
 
 
 def base_station(num_base, station_member):
@@ -24,20 +24,26 @@ def base_station(num_base, station_member):
     return station_member
 
 
-def random_node(node_member, len_nodes, width, height, station_member):
+def random_node(node_member, len_nodes, width, height, station_member, node_energy):
     """random Node"""
     count = 0
     while len(node_member) != len_nodes:
         random_x, random_y = rd.randint(0, width), rd.randint(0, height)
         if [random_x, random_y] not in node_member and [random_x, random_y] not in station_member:
             node_member.append([random_x, random_y])
+            node_energy.append("1")  # Joule
         count += 1
     # append data to csv. file
     with open('node_member.csv', 'w', newline='') as csvnew:
         write = csv.writer(csvnew)
         for line in node_member:
             write.writerow(line)
-    return node_member
+    with open('node_energy.csv', 'w', newline='') as csvnew:
+        write = csv.writer(csvnew)
+        for line in node_energy:
+            write.writerow(line)
+
+    return node_member, node_energy
 
 
 def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_data):
@@ -97,6 +103,11 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option):
     return shot_dis_data
 
 
+def cal_energy(node_member, cluster_member, shot_dis_data, node_energy):
+    """Calculate how much energy nodes use"""
+
+
+
 def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option):
     """plot everything in graph"""
     # plot line between node and cluster
@@ -132,11 +143,11 @@ def new_input(width, height, density, cluster_density, num_base, option):
     """insert area and population of node and point of base station"""
 
     # variable
-    node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster = variable(width, height, density
-                                                                                                  , cluster_density)
+    node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster, node_energy = \
+        variable(width, height, density, cluster_density)
 
     # random_node
-    node_member = random_node(node_member, len_nodes, width, height, station_member)
+    node_member, node_energy = random_node(node_member, len_nodes, width, height, station_member, node_energy)
 
     # random_cluster
     cluster_member = random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_data)
@@ -155,7 +166,7 @@ def new_input(width, height, density, cluster_density, num_base, option):
 def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
     # gain data from .csv files
-    old_sdd, old_nm, old_cm, station_member = [], [], [], []
+    old_sdd, old_nm, old_cm, old_e, station_member = [], [], [], []
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
