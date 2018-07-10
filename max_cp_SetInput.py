@@ -105,7 +105,23 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option):
 
 def cal_energy(node_member, cluster_member, shot_dis_data, node_energy):
     """Calculate how much energy nodes use"""
+    data = 500
+    elec_tran = 50
+    elec_rec = 50
+    fs = 10
+    mpf = 0.013
+    
+    d_threshold = 0
+    for i in range(len(shot_dis_data)):
+        d_threshold += i
+    d_threshold = d_threshold/len(shot_dis_data)
+    
+    cal_e1 = data*(elec_tran+fs*(d**2))
+    cal_e2 = data*(elec_tran+mpf*(d**4))
 
+    for j in range(node_member):
+        if (shot_dis_data)
+    
 
 
 def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option):
