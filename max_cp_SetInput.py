@@ -42,7 +42,7 @@ def random_node(node_member, len_nodes, width, height, station_member, node_ener
         write = csv.writer(csvnew)
         for line in node_energy:
             write.writerow(line)
-
+    print(node_energy)
     return node_member, node_energy
 
 
@@ -103,30 +103,27 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option):
     return shot_dis_data
 
 
-def cal_energy(node_member, cluster_member, shot_dis_data, node_energy):
+def cal_energy(node_member, cluster_member, shot_dis_data):
     """Calculate how much energy nodes use"""
     data = 500
-    elec_tran = 50
+    elec_tran = 0.00000005 #nano
     elec_rec = 50
-    fs = 10
-    mpf = 0.013
+    fs = 0.00000000001 #pico
+    mpf = 0.000000000000013/10000 #pico
     
     d_threshold = 0
     for i in range(len(shot_dis_data)):
         d_threshold += i
     d_threshold = d_threshold/len(shot_dis_data)
     print(d_threshold)
-    print(node_energy, "energygygygy")
 
-    count += 1
-    while node_energy != 0:
-        for index in shot_dis_data:
-            if float(index[2]) <= d_threshold:
-                cal_e1 = data*(elec_tran+fs*(float(index[2])**2))
-                print("less", "%2f"%cal_e1)
-            else:
-                cal_e2 = data*(elec_tran+mpf*(float(index[2])**4))
-                print("more", "%1f"%cal_e2)
+    for index in shot_dis_data:
+        if float(index[2]) <= d_threshold:
+            cal_e1 = data*(elec_tran+fs*(float(index[2])**2))
+            print(index[0], cal_e1)
+        else:
+            cal_e2 = data*(elec_tran+mpf*(float(index[2])**4))
+            print(index[0], cal_e2)
         
 
 
@@ -254,7 +251,7 @@ def current_data(option):
     # plot
     count_lap = "CURRENT_DATA"
     plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
-    cal_energy(node_member, cluster_member, shot_dis_data, node_energy)
+    cal_energy(node_member, cluster_member, shot_dis_data)
     
 
 
