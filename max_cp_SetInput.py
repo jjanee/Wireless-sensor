@@ -115,12 +115,25 @@ def cal_energy(node_member, cluster_member, shot_dis_data, node_energy):
     for i in range(len(shot_dis_data)):
         d_threshold += i
     d_threshold = d_threshold/len(shot_dis_data)
-    
-    cal_e1 = data*(elec_tran+fs*(d**2))
-    cal_e2 = data*(elec_tran+mpf*(d**4))
+    print(d_threshold)
+    print(node_energy, "energygygygy")
 
-    for j in range(node_member):
-        if (shot_dis_data)
+    count += 1
+    while node_energy != 0:
+        for index in shot_dis_data:
+            if float(index[2]) <= d_threshold:
+                cal_e1 = data*(elec_tran+fs*(float(index[2])**2))
+                print("less", "%2f"%cal_e1)
+            else:
+                cal_e2 = data*(elec_tran+mpf*(float(index[2])**4))
+                print("more", "%1f"%cal_e2)
+        
+
+
+##    return d_threshold, cal_e1, cal_e2
+
+##    for j in range(node_member):
+        
     
 
 
@@ -241,6 +254,8 @@ def current_data(option):
     # plot
     count_lap = "CURRENT_DATA"
     plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
+    cal_energy(node_member, cluster_member, shot_dis_data, node_energy)
+    
 
 
 def start():
