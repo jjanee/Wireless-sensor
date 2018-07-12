@@ -29,7 +29,8 @@ def random_node(node_member, len_nodes, width, height, station_member, node_ener
     count = 0
     while len(node_member) != len_nodes:
         random_x, random_y = rd.randint(0, width), rd.randint(0, height)
-        if [random_x, random_y] not in node_member and [random_x, random_y] not in station_member:
+        if [random_x, random_y] not in node_member and \
+           [random_x, random_y] not in station_member:
             node_member.append([random_x, random_y])
             node_energy.append("1")  # Joule
         count += 1
