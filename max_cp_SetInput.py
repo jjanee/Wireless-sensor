@@ -2,6 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import random as rd
 import math
+import numpy as np
 
 
 def variable(width, height, density, cluster_density):
@@ -116,23 +117,14 @@ def cal_energy(node_member, cluster_member, shot_dis_data):
     for i in range(len(shot_dis_data)):
         d_threshold += i
     d_threshold = d_threshold/len(shot_dis_data)
-    print(d_threshold)
 
     for index in shot_dis_data:
         if float(index[2]) <= d_threshold:
             cal_e1 = data*(elec_tran+fs*(float(index[2])**2))
-            print(index[0], cal_e1)
+##            print(index[0], cal_e1)
         else:
             cal_e2 = data*(elec_tran+mpf*(float(index[2])**4))
-            print(index[0], cal_e2)
-        
-
-
-##    return d_threshold, cal_e1, cal_e2
-
-##    for j in range(node_member):
-        
-    
+##            print(index[0], cal_e2)
 
 
 def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option):
@@ -157,14 +149,19 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
     plt.plot(base_x[0:], base_y[0:], 'ro', markersize=3)  # base station
     plt.plot(node_x[0:], node_y[0:], 'bo', markersize=3)  # nodes
     plt.plot(clus_x[0:], clus_y[0:], 'go', markersize=3)  # cluster head
-    #  how to rename files
-    if option == 0 or option == 1:
-        plt.savefig("Figure_%s.png" % count_lap)
-    elif option == 2:
-        plt.savefig("Figure_%d.png" % count_lap)
     plt.show()
     plt.close()
 
+    
+
+##    plt.xlabel('Smarts')
+##    plt.ylabel('Probability')
+##    plt.title('average distance')
+##    plt.grid(True)
+    for index in range(len(shot_dis_data)):
+        print(type(shot_dis_data[index][2]))
+    # อันนี้ต้องเป็น แกน y plt.hist(float(shot_dis_data[index][2]))
+        plt.bar(height=[float(shot_dis_data[index][2])])
 
 def new_input(width, height, density, cluster_density, num_base, option):
     """insert area and population of node and point of base station"""
@@ -252,7 +249,6 @@ def current_data(option):
     # plot
     count_lap = "CURRENT_DATA"
     plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
-    cal_energy(node_member, cluster_member, shot_dis_data)
     
 
 
