@@ -203,7 +203,7 @@ def new_input(width, height, density, cluster_density, num_base, option):
 def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
     # gain data from .csv files
-    old_sdd, old_nm, old_cm, old_e, station_member = [], [], [], []
+    old_sdd, old_nm, old_cm, station_member = [], [], [], []
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
