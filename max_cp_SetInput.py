@@ -3,50 +3,48 @@ import matplotlib.pyplot as plt
 import random as rd
 import math
 import numpy as np
-
+import pandas
+from collections import Counter
+import os
 
 def variable(width, height, density, cluster_density):
     """variables"""
-    node_member, cluster_member, station_member, node_energy, shot_dis_data = [], [], [], [], []
+    node_member, cluster_member, station_member, shot_dis_data = [], [], [], []
     len_nodes = math.ceil(density * (width * height))
     len_cluster = math.ceil(cluster_density * len_nodes)
-    return node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster, node_energy
+    return node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster
 
 
 def base_station(num_base, station_member):
     """input base station point"""
     for item in range(num_base):
-        station_member.append(list(map(int, "51,-1".split(','))))
-    # append data to csv. file
-    with open('station_member.csv', 'w', newline='') as csvnew:
-        write = csv.writer(csvnew)
+        station_member.append(list(map(int, "50,-1".split(','))))
+    with open('station_member.csv', 'w') as csvfile:
+        fieldnames = ['station x', 'station y', 'node x', 'node y', 'energy']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
         for line in station_member:
-            write.writerow(line)
+            writer.writerow({'station x':line[0], 'station y':line[1]})
     return station_member
 
 
-def random_node(node_member, len_nodes, width, height, station_member, node_energy):
+def random_node(node_member, len_nodes, width, height, station_member):
     """random Node"""
     count = 0
     while len(node_member) != len_nodes:
-        random_x, random_y = rd.randint(0, width), rd.randint(0, height)
+        random_x, random_y = [rd.randint(0, width), rd.randint(0, height)]
         if [random_x, random_y] not in node_member and \
            [random_x, random_y] not in station_member:
-            node_member.append([random_x, random_y])
-            node_energy.append("1")  # Joule
+            node_member.append([random_x, random_y, 1])# Joule
         count += 1
     # append data to csv. file
+
     with open('node_member.csv', 'w', newline='') as csvnew:
         write = csv.writer(csvnew)
         for line in node_member:
             write.writerow(line)
-    with open('node_energy.csv', 'w', newline='') as csvnew:
-        write = csv.writer(csvnew)
-        for line in node_energy:
-            write.writerow(line)
-    print(node_energy)
-    return node_member, node_energy
-
+            
+    return node_member
 
 def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_data):
     """random Cluster from amount Node"""
@@ -60,14 +58,16 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
             write = csv.writer(csvnew)
             for line in cluster_member:
                 write.writerow(line)
+
     elif option == 2:
         cluster_member = []
         count = 0
         while count != len_cluster:
             cluster = node_member[rd.randint(0, len(node_member) - 1)]
             for i in range(len(shot_dis_data)):
-                if int(shot_dis_data[i][1]) == count and float(
-                        shot_dis_data[i][2]) != 0.0 and cluster not in cluster_member:
+                if int(shot_dis_data[i][1]) == count and \
+                   float(shot_dis_data[i][2]) != 0.0 and \
+                   cluster not in cluster_member:
                     cluster_member.append(cluster)
                     print(cluster)
                     count += 1
@@ -76,6 +76,8 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
             write = csv.writer(csvnew)
             for line in cluster_member:
                 write.writerow(line)
+
+        
     return cluster_member
 
 
@@ -107,24 +109,30 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option):
 
 def cal_energy(node_member, cluster_member, shot_dis_data):
     """Calculate how much energy nodes use"""
-    data = 500
-    elec_tran = 0.00000005 #nano
-    elec_rec = 50
-    fs = 0.00000000001 #pico
-    mpf = 0.000000000000013/10000 #pico
+    data = 500 #bit
+    elec_tran = 0.00000005 #50 nanoj
+    elec_rec = 50 #พลังงานตอนรับ 50 nanoj
+    fs = 0.00000000001 #10 picoj
+    mpf = 0.000000000000013 #0.013 picoj
     
     d_threshold = 0
     for i in range(len(shot_dis_data)):
         d_threshold += i
     d_threshold = d_threshold/len(shot_dis_data)
 
-    for index in shot_dis_data:
-        if float(index[2]) <= d_threshold:
-            cal_e1 = data*(elec_tran+fs*(float(index[2])**2))
-##            print(index[0], cal_e1)
+
+    calculate = []
+    for index in range(len(shot_dis_data)):
+        distance = float(shot_dis_data[index][2])
+        if float(shot_dis_data[index][2]) < d_threshold:
+            calculate.append((elec_tran+(fs*(distance**2)))*data)
         else:
-            cal_e2 = data*(elec_tran+mpf*(float(index[2])**4))
-##            print(index[0], cal_e2)
+            calculate.append((elec_tran+(mpf*(distance**4)))*data)
+##    with open("node_energy.csv", 'r') as csvinput:
+##        with open("cal_node_energy.csv", 'w') as csvoutput:
+##            writer = csv.writer(csvoutput)
+##            for row in csv.reader(csvinput):
+##                writer.writerow(row+[calculate[index]])
 
 
 def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option):
@@ -138,8 +146,8 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
                      color='k', linestyle='-', linewidth=0.1)  # Black Line
     # split 2d list to 1d list
     base_x, base_y = zip(*station_member)
-    clus_x, clus_y = zip(*cluster_member)
-    node_x, node_y = zip(*node_member)
+    clus_x, clus_y, clus_energy_cal = zip(*cluster_member)
+    node_x, node_y, node_energy_cal = zip(*node_member)
     # plot node, base, cluster
     plt.axis('scaled')
     plt.xlabel('Width')
@@ -149,42 +157,47 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
     plt.plot(base_x[0:], base_y[0:], 'ro', markersize=3)  # base station
     plt.plot(node_x[0:], node_y[0:], 'bo', markersize=3)  # nodes
     plt.plot(clus_x[0:], clus_y[0:], 'go', markersize=3)  # cluster head
-    plt.show()
+    if option == 0 or option == 1:
+        plt.savefig("Figure_%s.png" % count_lap)
+    elif option == 2:
+        plt.savefig("Figure_%d.png" % count_lap)
     plt.close()
 
+    keep = []
+    node = []
+    for index in shot_dis_data:
+        keep.append(float("%.1f"%(float(index[2]))))
+        node.append(int(index[1]))
+    keep.sort()#"---------------------------------distance-------"
+    letter_counts = Counter(keep)
+    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
+    df.plot(kind='bar')
+    plt.savefig('distance.png', dpi=1200)
+    plt.close()#---------------member of cluster ber round-------"
+    letter_counts = Counter(node)
+    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
+    df.plot(kind='bar')
+    plt.savefig('member of cluster.png', dpi=1200)
+    plt.close()
     
-
-##    plt.xlabel('Smarts')
-##    plt.ylabel('Probability')
-##    plt.title('average distance')
-##    plt.grid(True)
-    for index in range(len(shot_dis_data)):
-        print(type(shot_dis_data[index][2]))
-    # อันนี้ต้องเป็น แกน y plt.hist(float(shot_dis_data[index][2]))
-        plt.bar(height=[float(shot_dis_data[index][2])])
 
 def new_input(width, height, density, cluster_density, num_base, option):
     """insert area and population of node and point of base station"""
 
-    # variable
-    node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster, node_energy = \
-        variable(width, height, density, cluster_density)
+    node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster = \
+        variable(width, height, density, cluster_density) # variable
 
-    # random_node
-    node_member, node_energy = random_node(node_member, len_nodes, width, height, station_member, node_energy)
+    node_member = random_node(node_member, len_nodes, width, height, station_member)# random_node
 
-    # random_cluster
-    cluster_member = random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_data)
+    cluster_member = random_cluster(cluster_member, len_cluster, node_member,\
+                                    option, shot_dis_data) # random_cluster
 
-    # set base_station
-    station_member = base_station(num_base, station_member)
+    station_member = base_station(num_base, station_member) # set base_station
 
-    # cal_shot_distance
-    shot_dis_data = cal_shot_distance(node_member, cluster_member, shot_dis_data, option)
-
-    # plot
+    shot_dis_data = cal_shot_distance(node_member, cluster_member,\
+                                      shot_dis_data, option)# cal_shot_distance
     count_lap = "NEW_INPUT"
-    plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
+    plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option) # plot
 
 
 def random_cluster_ingroup(option, lap):
@@ -249,7 +262,7 @@ def current_data(option):
     # plot
     count_lap = "CURRENT_DATA"
     plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
-    
+
 
 
 def start():
