@@ -217,7 +217,11 @@ def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
     # gain data from .csv files
 <<<<<<< HEAD
+<<<<<<< HEAD
     old_sdd, old_nm, old_cm, old_e, station_member = [], [], [], [], []
+=======
+    old_sdd, old_nm, old_cm, station_member = [], [], [], []
+>>>>>>> 1f93cd738db6f4c725f727ff71390d5454c00137
 =======
     old_sdd, old_nm, old_cm, station_member = [], [], [], []
 >>>>>>> 1f93cd738db6f4c725f727ff71390d5454c00137
