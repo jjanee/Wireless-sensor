@@ -5,6 +5,7 @@ import math
 import numpy as np
 import pandas
 from collections import Counter
+import seaborn
 
 def variable(width, height, density, cluster_density):
     """variables"""
@@ -124,6 +125,7 @@ def cal_energy(node_member, cluster_member, shot_dis_data):
         #เปิดไฟล์
         calculate = ((elec_rec+fs)*data)
         cluster_member[index][2] = cluster_member[index][2]- calculate
+        print(index, cluster_member[index][2])
 
 
 
@@ -173,14 +175,16 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
     keep = []
     node = []
     for index in shot_dis_data:
-        keep.append(float("%.1f"%(float(index[2]))))
+        keep.append("%.1f"%float(index[2]))
         node.append(int(index[1]))
-    print(keep)
-    keep.sort()#"---------------------------------distance-------" 
+    #"---------------------------------distance-------"
+    keep.sort()
+##    seaborn.set()
     letter_counts = Counter(keep)
     df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-    df.plot(kind='bar')
+    df.plot(kind = 'bar')
     plt.savefig('distance.png', dpi=1200)
+    plt.close()
     #---------------member of cluster ber round-------"
 ##    node.sort()
     letter_counts = Counter(node)
@@ -206,12 +210,17 @@ def new_input(width, height, density, cluster_density, num_base, option):
     shot_dis_data = cal_shot_distance(node_member, cluster_member,\
                                       shot_dis_data, option)# cal_shot_distance
     count_lap = "NEW_INPUT"
+    cal_energy(node_member, cluster_member, shot_dis_data)
     plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option) # plot
 
 def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
     # gain data from .csv files
+<<<<<<< HEAD
     old_sdd, old_nm, old_cm, old_e, station_member = [], [], [], [], []
+=======
+    old_sdd, old_nm, old_cm, station_member = [], [], [], []
+>>>>>>> 1f93cd738db6f4c725f727ff71390d5454c00137
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
