@@ -118,29 +118,34 @@ def cal_energy(node_member, cluster_member, shot_dis_data):
     for i in range(len(shot_dis_data)):
         d_threshold += i
     d_threshold = d_threshold/len(shot_dis_data)
-
+##tran trans ---------------------------------------------------------node to cluster head 
+    for round in range(1400):
+        cal_node = []
+        for x in range(len(shot_dis_data)):
+            distance = float(shot_dis_data[x][2])
+            if float(shot_dis_data[x][2]) < d_threshold:
+                node_member[x][2] = node_member[x][2]-(elec_tran+(fs*(distance**2)))*data
+                cal_node.append(node_member[x][2])
+            else:
+                node_member[x][2] = node_member[x][2]-(elec_tran+(mpf*(distance**4)))*data
+                cal_node.append(node_member[x][2])
 ##tran recive ---------------------------------------------------------node to cluster head
-    for i in range(len(shot_dis_data)):
-        index = int(shot_dis_data[i][1])
-        #เปิดไฟล์
-        calculate = ((elec_rec+fs)*data)
-        cluster_member[index][2] = cluster_member[index][2]- calculate
-        print(index, cluster_member[index][2])
-
-
-
+        cal = []
+        for i in range(len(shot_dis_data)):
+            index = int(shot_dis_data[i][1])
+            calculate = ((elec_rec+fs)*data)
+            cluster = cluster_member[index][2]- calculate
+            cluster_member[index][2] =cluster_member[index][2]- calculate
+            cal.append(cluster_member[index][2])
 ##tran send -----------------------------------------------------------node to cluster head
-##    with open("cal_node_energy.csv", 'a') as csvoutput:
-##        writer = csv.writer(csvoutput)
-##
-##        for index in range(len(shot_dis_data)):
-##            distance = float(shot_dis_data[index][2])
-##            if float(shot_dis_data[index][2]) < d_threshold:
-##                calculate = ((elec_tran+(fs*(distance**2)))*data)
-##                writer.writerow(calculate)
-##            else:
-##                calculate = ((elec_tran+(mpf*(distance**4)))*data)
-##                writer.writerow(calculate)
+        
+##write recive ---------------------------------------------------------node to cluster head   
+        with open("cal_node_energy.csv", 'a') as file1:
+            writer = csv.writer(file1)
+            writer.writerow(cal_node)
+        with open('cal_cluster_energy.csv','a')as file2:
+            writer = csv.writer(file2)
+            writer.writerow(cal)
 
 
 
@@ -170,7 +175,6 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
         plt.savefig("Figure_%s.png" % count_lap)
     elif option == 2:
         plt.savefig("Figure_%d.png" % count_lap)
-    plt.close()
 
     keep = []
     node = []
@@ -178,20 +182,20 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
         keep.append("%.1f"%float(index[2]))
         node.append(int(index[1]))
     #"---------------------------------distance-------"
-    keep.sort()
+    int(keep.sort())
 ##    seaborn.set()
     letter_counts = Counter(keep)
     df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-    df.plot(kind = 'bar')
+    df.plot(kind = 'bar',title='distance between node and cluster', colormap='jet')
     plt.savefig('distance.png', dpi=1200)
-    plt.close()
+    
     #---------------member of cluster ber round-------"
 ##    node.sort()
     letter_counts = Counter(node)
     df = pandas.DataFrame.from_dict(letter_counts, orient='index')
     df.plot(kind='bar', title='member of cluster per round', colormap='jet')
     plt.savefig('member of cluster.png', dpi=1200)
-    plt.close()
+    
     
 
 def new_input(width, height, density, cluster_density, num_base, option):
@@ -216,15 +220,7 @@ def new_input(width, height, density, cluster_density, num_base, option):
 def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
     # gain data from .csv files
-<<<<<<< HEAD
-<<<<<<< HEAD
     old_sdd, old_nm, old_cm, old_e, station_member = [], [], [], [], []
-=======
-    old_sdd, old_nm, old_cm, station_member = [], [], [], []
->>>>>>> 1f93cd738db6f4c725f727ff71390d5454c00137
-=======
-    old_sdd, old_nm, old_cm, station_member = [], [], [], []
->>>>>>> 1f93cd738db6f4c725f727ff71390d5454c00137
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
