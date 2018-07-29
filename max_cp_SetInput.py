@@ -33,10 +33,10 @@ def random_node(node_member, len_nodes, width, height, station_member):
     """random Node"""
     count = 0
     while len(node_member) != len_nodes:
-        random_x, random_y = [rd.randint(0, width), rd.randint(0, height)]
-        if [random_x, random_y] not in node_member and \
+        random_x, random_y, energy = [rd.randint(0, width), rd.randint(0, height), 1]
+        if [random_x, random_y, energy] not in node_member and \
                 [random_x, random_y] not in station_member:
-            node_member.append([random_x, random_y, 1])  # set energy = 1 Joule
+            node_member.append([random_x, random_y, energy])  # set energy = 1 Joule
         count += 1
 
     # append data to csv. file
@@ -63,16 +63,27 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
                 write.writerow(line)
 
     elif option == 2:
-        cluster_member = []
         count = 0
-        while len(cluster_member) != len_cluster:
-            cluster = node_member[rd.randint(0, len(node_member) - 1)][:2]
+        while count != len(cluster_member):
             for i in range(len(shot_dis_data)):
-                if cluster not in cluster_member \
-                        and int(shot_dis_data[i][1]) == count \
-                        and float(shot_dis_data[i][2]) != 0.0:
-                    cluster_member.append(cluster)
-                    count += 1
+                if int(shot_dis_data[i][1]) == count:
+                    print(node_member[i][:2], end='')
+                    print(shot_dis_data[i])
+
+            c2 = None
+            while c2 != count:
+                cluster = shot_dis_data[rd.randint(0, len(node_member) - 1)]
+                if int(cluster[1]) == count:
+                    print(cluster)
+                    c2 = count
+            count += 1
+            print("-------------------------------")
+
+
+
+                # if cluster not in cluster_member and int(shot_dis_data[i][1]) == count and float(shot_dis_data[i][2]) != 0.0:
+                #     cluster_member.append(cluster[:2])
+                #     count += 1
         print(str(len(cluster_member))+"*******")
 
         # append data to csv. file
@@ -87,13 +98,15 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
 def cal_shot_distance(node_member, cluster_member, shot_dis_data, option):
     """find distance between node and cluster"""
     if option == 2:
-        for node in range(len(node_member)):
-            for cluster in range(len(cluster_member)):
+        for cluster in range(len(cluster_member)):
+            for node in range(len(node_member)):
                 cal_distance = math.sqrt((node_member[node][0] - cluster_member[cluster][0]) ** 2 +
                                          (node_member[node][1] - cluster_member[cluster][1]) ** 2)
-                if shot_dis_data[node][1] == cluster:
-                    shot_dis_data[node][1] = [node, cluster, cal_distance]
 
+                # if cal_distance == 0.0:
+                #     print("       "+str(cal_distance))
+                #     print(shot_dis_data[node][1:])
+                #     print("------------------------------------")
     elif option == 0:
         for node in range(len(node_member)):
             shot_dis = None  # shortest distance
@@ -146,8 +159,6 @@ def cal_energy(node_member, cluster_member, shot_dis_data):
     for x in range(len(shot_dis_data)):
         distance = float(shot_dis_data[x][2])
         if distance == 0.0:  # cluster (receive nodes)
-            print(cluster_carry)
-            print(shot_dis_data[x][1])
             calculate.append(cluster_carry[int(shot_dis_data[x][1])] * elec_rec)
         elif distance < d_threshold:#nodes (tranfer nodes)
             calculate.append((elec_tran + (fs * (distance ** 2))) * data)
@@ -158,7 +169,7 @@ def cal_energy(node_member, cluster_member, shot_dis_data):
     for e in range(len(shot_dis_data)):
         current_energy = node_member[e][2] - float(calculate[e])
         node_member[e][2] = current_energy
-        print(node_member[e])
+        # print(node_member[e])
     return node_member
 
 
