@@ -7,6 +7,7 @@ import pandas
 from collections import Counter
 import seaborn
 
+
 def variable(width, height, density, cluster_density):
     """variables"""
     node_member, cluster_member, station_member, shot_dis_data = [], [], [], []
@@ -32,8 +33,8 @@ def random_node(node_member, len_nodes, width, height, station_member):
     while len(node_member) != len_nodes:
         random_x, random_y = [rd.randint(0, width), rd.randint(0, height)]
         if [random_x, random_y] not in node_member and \
-           [random_x, random_y] not in station_member:
-            node_member.append([random_x, random_y, 1])# Joule
+                [random_x, random_y] not in station_member:
+            node_member.append([random_x, random_y, 1])  # Joule
         count += 1
     # append data to csv. file
 
@@ -42,6 +43,7 @@ def random_node(node_member, len_nodes, width, height, station_member):
         for line in node_member:
             write.writerow(line)
     return node_member
+
 
 def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_data):
     """random Cluster from amount Node"""
@@ -63,8 +65,8 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
             cluster = node_member[rd.randint(0, len(node_member) - 1)]
             for i in range(len(shot_dis_data)):
                 if int(shot_dis_data[i][1]) == count and \
-                   float(shot_dis_data[i][2]) != 0.0 and \
-                   cluster not in cluster_member:
+                        float(shot_dis_data[i][2]) != 0.0 and \
+                        cluster not in cluster_member:
                     cluster_member.append(cluster)
                     print(cluster)
                     count += 1
@@ -74,7 +76,6 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
             for line in cluster_member:
                 write.writerow(line)
 
-        
     return cluster_member
 
 
@@ -106,47 +107,44 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option):
 
 def cal_energy(node_member, cluster_member, shot_dis_data):
     """Calculate how much energy nodes use"""
-    data = 500 #bit
-    elec_tran = 0.00000005 #50 nanoj
-    fs = 0.00000000001 #10 picoj
-    mpf = 0.000000000000013 #0.013 picoj
+    data = 500  # bit
+    elec_tran = 50 * (10 ^ (-9))  # 50 nanoj
+    elec_rec = 50 * (10 ^ (-9))  # พลังงานตอนรับ 50 nanoj
+    fs = 10 * (10 ^ (-12))  # 10 picoj
+    mpf = 0.013 * (10 ^ (-12))  # 0.013 picoj
 
-    elec_rec = 0.00000005 #พลังงานตอนรับ 50 nanoj
-    cal_recive = ((elec_rec+fs)*data)
-    
     d_threshold = 0
     for i in range(len(shot_dis_data)):
         d_threshold += i
-    d_threshold = d_threshold/len(shot_dis_data)
-##tran trans ---------------------------------------------------------node to cluster head 
-    for round in range(1400):
+    d_threshold = d_threshold / len(shot_dis_data)
+
+    # tran trans ---------------------------------------------------------node to cluster head
+    for _ in range(1400):
         cal_node = []
         for x in range(len(shot_dis_data)):
             distance = float(shot_dis_data[x][2])
             if float(shot_dis_data[x][2]) < d_threshold:
-                node_member[x][2] = node_member[x][2]-(elec_tran+(fs*(distance**2)))*data
+                node_member[x][2] = node_member[x][2] - (elec_tran + (fs * (distance ** 2))) * data
                 cal_node.append(node_member[x][2])
             else:
-                node_member[x][2] = node_member[x][2]-(elec_tran+(mpf*(distance**4)))*data
+                node_member[x][2] = node_member[x][2] - (elec_tran + (mpf * (distance ** 4))) * data
                 cal_node.append(node_member[x][2])
-##tran recive ---------------------------------------------------------node to cluster head
+        # tran recive ---------------------------------------------------------node to cluster head
         cal = []
         for i in range(len(shot_dis_data)):
             index = int(shot_dis_data[i][1])
-            calculate = ((elec_rec+fs)*data)
-            cluster = cluster_member[index][2]- calculate
-            cluster_member[index][2] =cluster_member[index][2]- calculate
+            calculate = (elec_rec * data)
+            cluster_member[index][2] = cluster_member[index][2] - calculate
             cal.append(cluster_member[index][2])
-##tran send -----------------------------------------------------------node to cluster head
-        
-##write recive ---------------------------------------------------------node to cluster head   
+        # tran send -----------------------------------------------------------node to cluster head
+
+        # write recive ---------------------------------------------------------node to cluster head
         with open("cal_node_energy.csv", 'a') as file1:
             writer = csv.writer(file1)
             writer.writerow(cal_node)
-        with open('cal_cluster_energy.csv','a')as file2:
+        with open('cal_cluster_energy.csv', 'a')as file2:
             writer = csv.writer(file2)
             writer.writerow(cal)
-
 
 
 def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option):
@@ -179,43 +177,42 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
     keep = []
     node = []
     for index in shot_dis_data:
-        keep.append("%.1f"%float(index[2]))
+        keep.append("%.1f" % float(index[2]))
         node.append(int(index[1]))
-    #"---------------------------------distance-------"
+    # "---------------------------------distance-------"
     int(keep.sort())
-##    seaborn.set()
+    ##    seaborn.set()
     letter_counts = Counter(keep)
     df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-    df.plot(kind = 'bar',title='distance between node and cluster', colormap='jet')
+    df.plot(kind='bar', title='distance between node and cluster', colormap='jet')
     plt.savefig('distance.png', dpi=1200)
-    
-    #---------------member of cluster ber round-------"
-##    node.sort()
+
+    # ---------------member of cluster ber round-------"
+    ##    node.sort()
     letter_counts = Counter(node)
     df = pandas.DataFrame.from_dict(letter_counts, orient='index')
     df.plot(kind='bar', title='member of cluster per round', colormap='jet')
     plt.savefig('member of cluster.png', dpi=1200)
-    
-    
+
 
 def new_input(width, height, density, cluster_density, num_base, option):
     """insert area and population of node and point of base station"""
 
     node_member, cluster_member, station_member, shot_dis_data, len_nodes, len_cluster = \
-        variable(width, height, density, cluster_density) # variable
+        variable(width, height, density, cluster_density)  # variable
 
-    node_member = random_node(node_member, len_nodes, width, height, station_member)# random_node
+    node_member = random_node(node_member, len_nodes, width, height, station_member)  # random_node
 
-    cluster_member = random_cluster(cluster_member, len_cluster, node_member,\
-                                    option, shot_dis_data) # random_cluster
+    cluster_member = random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_data)  # random_cluster
 
-    station_member = base_station(num_base, station_member) # set base_station
+    station_member = base_station(num_base, station_member)  # set base_station
 
-    shot_dis_data = cal_shot_distance(node_member, cluster_member,\
-                                      shot_dis_data, option)# cal_shot_distance
+    shot_dis_data = cal_shot_distance(node_member, cluster_member, shot_dis_data, option)  # cal_shot_distance
+
     count_lap = "NEW_INPUT"
     cal_energy(node_member, cluster_member, shot_dis_data)
-    plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option) # plot
+    plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)  # plot
+
 
 def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
@@ -256,7 +253,6 @@ def random_cluster_ingroup(option, lap):
     #     print(shot_dis_data[x])
 
 
-
 def current_data(option):
     """use current data not change anything"""
     # gain data from .csv files
@@ -281,7 +277,6 @@ def current_data(option):
     count_lap = "CURRENT_DATA"
     cal_energy(node_member, cluster_member, shot_dis_data)
     plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
-    
 
 
 def start():
