@@ -180,19 +180,19 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
         keep.append("%.1f" % float(index[2]))
         node.append(int(index[1]))
     # "---------------------------------distance-------"
-    int(keep.sort())
-    ##    seaborn.set()
-    letter_counts = Counter(keep)
-    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-    df.plot(kind='bar', title='distance between node and cluster', colormap='jet')
-    plt.savefig('distance.png', dpi=1200)
-
-    # ---------------member of cluster ber round-------"
-    ##    node.sort()
-    letter_counts = Counter(node)
-    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-    df.plot(kind='bar', title='member of cluster per round', colormap='jet')
-    plt.savefig('member of cluster.png', dpi=1200)
+##    keep.sort()
+##    ##    seaborn.set()
+##    letter_counts = Counter(keep)
+##    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
+##    df.plot(kind='bar', title='distance between node and cluster', colormap='jet')
+##    plt.savefig('distance.png', dpi=1200)
+##
+##    # ---------------member of cluster ber round-------"
+##    ##    node.sort()
+##    letter_counts = Counter(node)
+##    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
+##    df.plot(kind='bar', title='member of cluster per round', colormap='jet')
+##    plt.savefig('member of cluster.png', dpi=1200)
 
 
 def new_input(width, height, density, cluster_density, num_base, option):
