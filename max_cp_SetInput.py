@@ -77,17 +77,23 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
                         and float(node_member[int(cluster[0])][2]) > 0.0:  # protect from select dead nodes
                     cluster_member.append(node_member[int(cluster[0])][:2])
                     c2 = count
+                    print(shot_dis_data[int(cluster[0])][1:2], end='')
+                    print(node_member[int(cluster[0])])
                 elif int(cluster[1]) == count \
                         and float(node_member[int(cluster[0])][2]) > 0.0:  # when only 1 nodes left
                     cluster_member.append(node_member[int(cluster[0])][:2])
                     c2 = count
+                    print(shot_dis_data[int(cluster[0])][1:2], end='')
+                    print(node_member[int(cluster[0])])
                 elif int(cluster[1]) == count \
                         and ttl >= (len(node_member)*len_cluster):  # every nodes dead
                     cluster_member.append(node_member[int(cluster[0])][:2])
                     c2 = count
+                    print(shot_dis_data[int(cluster[0])][1:2], end='')
+                    print(node_member[int(cluster[0])])
                 ttl += 1
             count += 1
-
+        print("-------------^cluster^-------------")
 
     # append data to csv. file
     with open('cluster_member.csv', 'w', newline='') as csvnew:
@@ -156,13 +162,13 @@ def cal_energy(node_member, cluster_member, shot_dis_data, count_lap):
     mpf = 0.013 * (10 ** (-12))  # 0.013 picoj
 
     count = 0
-##    while count != len(cluster_member):
-##        for i in range(len(shot_dis_data)):
-##            if int(shot_dis_data[i][1]) == count:
-##                print(shot_dis_data[i][1:2], end='')
-##                print("  " + str(node_member[i]))
-##        count += 1
-
+    while count != len(cluster_member):
+        for i in range(len(shot_dis_data)):
+           if int(shot_dis_data[i][1]) == count:
+               print(shot_dis_data[i][1:2], end='')
+               print("  " + str(node_member[i]))
+        count += 1
+        print("------------------------------------------")
 
     d_threshold = 0
     for i in range(len(shot_dis_data)):
@@ -179,6 +185,7 @@ def cal_energy(node_member, cluster_member, shot_dis_data, count_lap):
                     and float(node_member[k][2] > 0.0):
                 temp += data
         cluster_carry.append(temp)
+    print(cluster_carry)
 
     dead_nodes = 0
     if sum(cluster_carry) == 0:
@@ -254,7 +261,8 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
     for index in keep_distance:
         keep.append(float("%.2f" % float(index[0])))
     plt.xlabel('distance')
-    plt.title('distance between cluster and node sensor')
+    plt.ylabel('amount of nodes')
+    plt.title('distance between cluster and nodes sensor')
     plt.hist(keep ,bins = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70])
     plt.savefig("distance.png")
     plt.close()
@@ -326,7 +334,7 @@ def random_cluster_ingroup(option, lap):
 
             node_member, dead_nodes = cal_energy(old_nm, cluster_member, shot_dis_data, count_lap)
 
-            plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
+            plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option, keep_distance)
 
             count_lap += 1
 
