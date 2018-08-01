@@ -77,23 +77,17 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
                         and float(node_member[int(cluster[0])][2]) > 0.0:  # protect from select dead nodes
                     cluster_member.append(node_member[int(cluster[0])][:2])
                     c2 = count
-                    print(node_member[int(cluster[0])])
                 elif int(cluster[1]) == count \
                         and float(node_member[int(cluster[0])][2]) > 0.0:  # when only 1 nodes left
                     cluster_member.append(node_member[int(cluster[0])][:2])
                     c2 = count
-                    print(node_member[int(cluster[0])])
                 elif int(cluster[1]) == count \
                         and ttl >= (len(node_member)*len_cluster):  # every nodes dead
                     cluster_member.append(node_member[int(cluster[0])][:2])
                     c2 = count
-                    print(node_member[int(cluster[0])])
                 ttl += 1
             count += 1
 
-            # print("---------------------------------------------")
-        print(str(len(cluster_member))+"*******")
-        # print("new" + str(cluster_member))
 
     # append data to csv. file
     with open('cluster_member.csv', 'w', newline='') as csvnew:
@@ -107,11 +101,13 @@ def random_cluster(cluster_member, len_cluster, node_member, option, shot_dis_da
 def cal_shot_distance(node_member, cluster_member, shot_dis_data, option, count_lap):
     """find distance between node and cluster"""
     # print("****************************---------------------------------********************************")
+    keep_distance = []
     if option == 2 or option == 1 and count_lap != 0:
         for cluster in range(len(cluster_member)):
             for node in range(len(node_member)):
                 cal_distance = math.sqrt((node_member[node][0] - cluster_member[cluster][0]) ** 2 +
                                          (node_member[node][1] - cluster_member[cluster][1]) ** 2)
+                keep_distance.append([cal_distance])
                 if int(shot_dis_data[node][1]) == cluster:
                     shot_dis_data[node] = [shot_dis_data[node][0], shot_dis_data[node][1], cal_distance]
     elif option == 0:
@@ -121,7 +117,7 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option, count_
             for cluster in range(len(cluster_member)):
                 cal_distance = math.sqrt((node_member[node][0] - cluster_member[cluster][0]) ** 2 +
                                          (node_member[node][1] - cluster_member[cluster][1]) ** 2)
-                # find shortest cluster
+                keep_distance.append([cal_distance])# find shortest cluster
                 if shot_dis is None:
                     shot_dis = cal_distance
                     what_cluster = cluster
@@ -144,6 +140,10 @@ def cal_shot_distance(node_member, cluster_member, shot_dis_data, option, count_
         write = csv.writer(csvnew)
         for line in shot_dis_data:
             write.writerow(line)
+    with open('keep_distance.csv', 'a', newline='') as csvnew:
+        write = csv.writer(csvnew)
+        for line in keep_distance:
+            write.writerow(line)
     return shot_dis_data
 
 
@@ -156,13 +156,13 @@ def cal_energy(node_member, cluster_member, shot_dis_data, count_lap):
     mpf = 0.013 * (10 ** (-12))  # 0.013 picoj
 
     count = 0
-    while count != len(cluster_member):
-        for i in range(len(shot_dis_data)):
-            if int(shot_dis_data[i][1]) == count:
-                print(shot_dis_data[i][1:2], end='')
-                print("  " + str(node_member[i]))
-        count += 1
-        print("---------------------------------------------")
+##    while count != len(cluster_member):
+##        for i in range(len(shot_dis_data)):
+##            if int(shot_dis_data[i][1]) == count:
+##                print(shot_dis_data[i][1:2], end='')
+##                print("  " + str(node_member[i]))
+##        count += 1
+
 
     d_threshold = 0
     for i in range(len(shot_dis_data)):
@@ -179,7 +179,6 @@ def cal_energy(node_member, cluster_member, shot_dis_data, count_lap):
                     and float(node_member[k][2] > 0.0):
                 temp += data
         cluster_carry.append(temp)
-    print(cluster_carry)
 
     dead_nodes = 0
     if sum(cluster_carry) == 0:
@@ -216,14 +215,12 @@ def cal_energy(node_member, cluster_member, shot_dis_data, count_lap):
     return node_member, dead_nodes
 
 
-def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option):
+def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option, keep_distance):
     """plot everything in graph"""
     # plot line between node and cluster
     plt.ion()  # make plt.close() can executed ***don't delete please
     for z in range(len(shot_dis_data)):
-        if shot_dis_data[z][2] != 0 and float(node_member[z][2]) > 0.0:
-            print(float(node_member[z][2]))
-            plt.plot([node_member[int(shot_dis_data[z][0])][0], cluster_member[int(shot_dis_data[z][1])][0]],
+        if shot_dis_data[z][2] != 0 and float(node_member[z][2]) > 0.0:            plt.plot([node_member[int(shot_dis_data[z][0])][0], cluster_member[int(shot_dis_data[z][1])][0]],
                      [node_member[int(shot_dis_data[z][0])][1], cluster_member[int(shot_dis_data[z][1])][1]],
                      color='k', linestyle='-', linewidth=0.5)  # Black Line
         elif shot_dis_data[z][2] != 0 and float(node_member[z][2]) == 0.0:
@@ -254,24 +251,13 @@ def plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, 
 
 
     keep = []
-    node = []
-    for index in shot_dis_data:
-        keep.append("%.1f" % float(index[2]))
-        node.append(int(index[1]))
-## "---------------------------------distance-------"
-##    keep.sort()
-##    ##    seaborn.set()
-##    letter_counts = Counter(keep)
-##    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-##    df.plot(kind='bar', title='distance between node and cluster', colormap='jet')
-##    plt.savefig('distance.png', dpi=1200)
-##
-##    # ---------------member of cluster ber round-------"
-##    ##    node.sort()
-##    letter_counts = Counter(node)
-##    df = pandas.DataFrame.from_dict(letter_counts, orient='index')
-##    df.plot(kind='bar', title='member of cluster per round', colormap='jet')
-##    plt.savefig('member of cluster.png', dpi=1200)
+    for index in keep_distance:
+        keep.append(float("%.2f" % float(index[0])))
+    plt.xlabel('distance')
+    plt.title('distance between cluster and node sensor')
+    plt.hist(keep ,bins = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70])
+    plt.savefig("distance.png")
+    plt.close()
 
 
 def new_input(width, height, density, cluster_density, num_base, option):
@@ -293,7 +279,7 @@ def new_input(width, height, density, cluster_density, num_base, option):
 def random_cluster_ingroup(option, lap):
     """only random new cluster from their own group"""
     # gain data from .csv files
-    old_sdd, old_nm, old_cm, old_e, station_member = [], [], [], [], []
+    old_sdd, old_nm, old_cm, old_e, station_member, keep_distance = [], [], [], [], [], []
     with open("station_member.csv", 'r') as csvnew:
         read = csv.reader(csvnew)
         for line in read:
@@ -310,6 +296,10 @@ def random_cluster_ingroup(option, lap):
         read = csv.reader(csvnew)
         for line in read:
             old_sdd.append(line)
+    with open("keep_distance.csv", 'r') as csvnew:
+        read = csv.reader(csvnew)
+        for line in read:
+            keep_distance.append(line)
 
     # loop with lap input
     count = 0
@@ -326,7 +316,7 @@ def random_cluster_ingroup(option, lap):
 
             node_member, dead_nodes = cal_energy(old_nm, cluster_member, shot_dis_data, count_lap)
 
-            plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option)
+            plot(shot_dis_data, node_member, cluster_member, station_member, count_lap, option, keep_distance)
     else:
         count_lap = 1
         while True:
